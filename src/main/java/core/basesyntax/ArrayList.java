@@ -1,12 +1,13 @@
 package core.basesyntax;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class ArrayList<T> implements List<T> {
+
     private static final int DEFAULT_ARRAY_SIZE = 10;
     private T[] array;
     private int arraySize = 0;
+
     public ArrayList() {
         array = (T[]) new Object[DEFAULT_ARRAY_SIZE];
     }
@@ -14,18 +15,17 @@ public class ArrayList<T> implements List<T> {
     @Override
     public void add(T value) {
         if (arraySize >= array.length) {
-        grow();
+            grow();
         }
         array[arraySize] = value;
         arraySize += 1;
     }
 
-
     @Override
     public void add(T value, int index) {
 
         checkIndex(index, arraySize);
-        if (arraySize == array.length){
+        if (arraySize == array.length) {
             grow();
         }
         T[] temporaryArray = (T[]) new Object[array.length];
@@ -36,7 +36,7 @@ public class ArrayList<T> implements List<T> {
 
         array[index] = value;
         for (int i = index; i < arraySize - 1; i++) {
-            array[i+1] = temporaryArray[i];
+            array[i + 1] = temporaryArray[i];
         }
 
     }
@@ -44,7 +44,7 @@ public class ArrayList<T> implements List<T> {
     @Override
     public void addAll(List<T> list) {
         for (int i = 0; i < list.size(); i++) {
-        add(list.get(i));
+            add(list.get(i));
         }
     }
 
@@ -68,23 +68,18 @@ public class ArrayList<T> implements List<T> {
         checkIndex(index, arraySize - 1);
         T temporaryValue = get(index);
         arraySize -= 1;
-        for (int i = index; i < arraySize; i++) {
-        array[i] = array[i+ 1];
-        }
-        array[arraySize] = null;
+        refillArray(index);
         return temporaryValue;
     }
 
     @Override
     public T remove(T element) {
         for (int i = 0; i < arraySize; i++) {
-        if (array[i] != null && array[i].equals(element) || array[i] == element) {
-            return remove(i);
-        }
+            if (array[i] != null && array[i].equals(element) || array[i] == element) {
+                return remove(i);
+            }
         }
         throw new NoSuchElementException("Value doesn't exist");
-
-
     }
 
     @Override
@@ -97,7 +92,7 @@ public class ArrayList<T> implements List<T> {
         return arraySize == 0;
     }
 
-    private void grow(){
+    private void grow() {
         T[] temporaryArray = array;
         array = (T[]) new Object[(int) (temporaryArray.length * 1.5)];
         for (int i = 0; i < temporaryArray.length; i++) {
@@ -109,5 +104,12 @@ public class ArrayList<T> implements List<T> {
         if (index > bound || index < 0) {
             throw new ArrayListIndexOutOfBoundsException("Index doesn't exist");
         }
+    }
+
+    private void refillArray(int index) {
+        for (int i = index; i < arraySize; i++) {
+            array[i] = array[i + 1];
+        }
+        array[arraySize] = null;
     }
 }
