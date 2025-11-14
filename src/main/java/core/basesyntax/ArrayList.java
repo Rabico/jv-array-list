@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 public class ArrayList<T> implements List<T> {
 
     private static final int DEFAULT_ARRAY_SIZE = 10;
+    private static final double GROWTH_FACTOR = 1.5;
     private T[] array;
     private int arraySize = 0;
 
@@ -28,17 +29,9 @@ public class ArrayList<T> implements List<T> {
         if (arraySize == array.length) {
             grow();
         }
-        T[] temporaryArray = (T[]) new Object[array.length];
-        for (int i = 0; i < arraySize; i++) {
-            temporaryArray[i] = array[i];
-        }
+        System.arraycopy(array, index, array, index + 1, arraySize - index);
         arraySize += 1;
-
         array[index] = value;
-        for (int i = index; i < arraySize - 1; i++) {
-            array[i + 1] = temporaryArray[i];
-        }
-
     }
 
     @Override
@@ -58,9 +51,7 @@ public class ArrayList<T> implements List<T> {
     public void set(T value, int index) {
         checkIndex(index, arraySize - 1);
         array[index] = value;
-        if (index == arraySize) {
-            arraySize += 1;
-        }
+
     }
 
     @Override
@@ -94,10 +85,8 @@ public class ArrayList<T> implements List<T> {
 
     private void grow() {
         T[] temporaryArray = array;
-        array = (T[]) new Object[(int) (temporaryArray.length * 1.5)];
-        for (int i = 0; i < temporaryArray.length; i++) {
-            array[i] = temporaryArray[i];
-        }
+        array = (T[]) new Object[(int) (temporaryArray.length * GROWTH_FACTOR)];
+        System.arraycopy(temporaryArray, 0, array, 0, arraySize);
     }
 
     private void checkIndex(int index, int bound) throws ArrayListIndexOutOfBoundsException {
@@ -107,9 +96,7 @@ public class ArrayList<T> implements List<T> {
     }
 
     private void refillArray(int index) {
-        for (int i = index; i < arraySize; i++) {
-            array[i] = array[i + 1];
-        }
+        System.arraycopy(array, index + 1, array, index, arraySize - index);
         array[arraySize] = null;
     }
 }
